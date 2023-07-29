@@ -14,6 +14,11 @@ pub fn parse_line(line: &str) -> Vec<entities::Token> {
                 tokens.push(entities::Token::EndOfSentence(char.to_string()));
                 plainstrings.clear();
             }
+            '、' | ',' => {
+                tokens.push(entities::Token::Text(plainstrings.concat()));
+                tokens.push(entities::Token::Comma(char.to_string()));
+                plainstrings.clear();
+            }
             _ => {
                 plainstrings.push(char.to_string());
             }
@@ -37,11 +42,15 @@ mod tests {
 
         #[test]
         fn it_returns_text_token() {
-            let result = parse_line("我が輩は猫である。名前はまだ無い。");
+            let result = parse_line("我が輩は、猫である。名前は、まだ無い。");
             let expected = vec![
-                entities::Token::Text("我が輩は猫である".to_string()),
+                entities::Token::Text("我が輩は".to_string()),
+                entities::Token::Comma("、".to_string()),
+                entities::Token::Text("猫である".to_string()),
                 entities::Token::EndOfSentence("。".to_string()),
-                entities::Token::Text("名前はまだ無い".to_string()),
+                entities::Token::Text("名前は".to_string()),
+                entities::Token::Comma("、".to_string()),
+                entities::Token::Text("まだ無い".to_string()),
                 entities::Token::EndOfSentence("。".to_string()),
             ];
             assert_eq!(result, expected);

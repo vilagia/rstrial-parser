@@ -3,6 +3,8 @@
 pub enum Token {
     // Plaintext to be rendered as-is.
     Text(String),
+    // A Sentence delimiter such as `,` or `、`.
+    Comma(String),
     // A comment that should be ignored.
     Comment(String),
     // Text to be rendered with additional styles.
