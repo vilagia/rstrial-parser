@@ -5,7 +5,7 @@ use crate::entities::{Token, self};
 
 #[derive(Debug)]
 pub struct LineParser<'a> {
-    source: Box<String>,
+    pub source: Box<String>,
     chars: Box<Chars<'a>>,
     state: State,
     stacked_tokens: Vec<Token>,
@@ -17,7 +17,7 @@ enum State {
 }
 
 impl<'a> LineParser<'a> {
-    fn new(line: &'a str) -> Self {
+    pub fn new(line: &'a str) -> Self {
         Self {
             source: Box::new(line.to_string()),
             chars: Box::new(line.chars()),
