@@ -41,7 +41,7 @@ impl Iterator for LineParser<'_> {
                 let mut texts = vec![];
                 for char in self.chars.by_ref() {
                     match char {
-                        '。' | '！' | '？' => {
+                        '。' | '！' | '？' | '」' => {
                             self.stacked_tokens.push(LineItem::EndOfSentence(char.to_string()));
                             token = Some(LineItem::Text(texts.concat()));
                             break;
