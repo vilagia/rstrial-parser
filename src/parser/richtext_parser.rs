@@ -1,0 +1,67 @@
+use std::str::Chars;
+
+use crate::entities::{Token, Attribute};
+
+pub struct RichTextParser<'a> {
+    source: Box<String>,
+    chars: Box<Chars<'a>>,
+    state: State,
+}
+
+enum State {
+    Text,
+    Ruby,
+}
+
+impl<'a> RichTextParser<'a> {
+    pub fn new(text: &'a str) -> Self {
+        Self {
+            source: Box::new(text.to_string()),
+            chars: Box::new(text.chars()),
+            state: State::Text,
+        }
+    }
+
+    pub fn parse(&mut self) -> Token {
+        let mut texts = vec![];
+        let mut attribute_chars = vec![];
+        for char in self.chars.by_ref() {
+            match self.state {
+                State::Text => {
+                    match char {
+                        '|' => {
+                            self.state = State::Ruby;
+                        }
+                        _ => {
+                            texts.push(char.to_string());
+                        }
+                    }
+                }
+                _ => {
+                    match char {
+                        _ => {
+                            attribute_chars.push(char.to_string());
+                        }
+                    }
+                }
+            }
+        }
+        let attribute = match self.state {
+            State::Ruby => Attribute::Ruby(attribute_chars.concat()),
+            State::Text => panic!("Invalid state."),
+        };
+        Token::RichText(texts.concat(), attribute)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_ruby() {
+        let mut parser = RichTextParser::new("漢字|かんじ");
+        let token = parser.parse();
+        assert_eq!(token, Token::RichText("漢字".to_string(), Attribute::Ruby("かんじ".to_string())));
+    }
+}
