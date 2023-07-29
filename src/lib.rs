@@ -37,9 +37,11 @@ mod tests {
 
         #[test]
         fn it_returns_text_token() {
-            let result = parse_line("我が輩は猫である。");
+            let result = parse_line("我が輩は猫である。名前はまだ無い。");
             let expected = vec![
                 entities::Token::Text("我が輩は猫である".to_string()),
+                entities::Token::EndOfSentence("。".to_string()),
+                entities::Token::Text("名前はまだ無い".to_string()),
                 entities::Token::EndOfSentence("。".to_string()),
             ];
             assert_eq!(result, expected);
