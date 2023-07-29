@@ -3,7 +3,7 @@ use std::str::Chars;
 use crate::tokens::{line_item::Attribute, LineItem};
 
 pub struct RichTextParser<'a> {
-    source: String,
+    pub source: String,
     chars: Box<Chars<'a>>,
     state: State,
 }
