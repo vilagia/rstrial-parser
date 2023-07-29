@@ -14,6 +14,7 @@ pub struct LineParser<'a> {
 #[derive(Debug)]
 enum State {
     Normal,
+    Brace,
 }
 
 impl<'a> LineParser<'a> {
@@ -50,8 +51,29 @@ impl Iterator for LineParser<'_> {
                             token = Some(entities::Token::Text(texts.concat()));
                             break;
                         }
+                        '{' => {
+                            self.state = State::Brace;
+                            token = self.next();
+                            break;
+                        }
                         _ => {
-                            println!("char: {}", char);
+                            texts.push(char.to_string());
+                        }
+                    }
+                }
+            }
+            State::Brace => {
+                let mut texts = vec![];
+                for char in self.chars.by_ref() {
+                    match char {
+                        '}' => {
+                            self.state = State::Normal;
+                            let rich_text: String = texts.concat();
+                            let mut richtext_parser = crate::parser::richtext_parser::RichTextParser::new(rich_text.as_str());
+                            token = Some(richtext_parser.parse());
+                            break;
+                        }
+                        _ => {
                             texts.push(char.to_string());
                         }
                     }
@@ -74,14 +96,15 @@ mod tests {
             let expected = vec![
                 entities::Token::Text("我が輩は".to_string()),
                 entities::Token::Comma("、".to_string()),
-                entities::Token::Text("猫である".to_string()),
+                entities::Token::RichText("猫".to_string(), entities::Attribute::Ruby("ねこ".to_string())),
+                entities::Token::Text("である".to_string()),
                 entities::Token::EndOfSentence("。".to_string()),
                 entities::Token::Text("名前は".to_string()),
                 entities::Token::Comma("、".to_string()),
                 entities::Token::Text("まだ無い".to_string()),
                 entities::Token::EndOfSentence("。".to_string()),
             ];
-            let parser = LineParser::new("我が輩は、猫である。名前は、まだ無い。");
+            let parser = LineParser::new("我が輩は、{猫|ねこ}である。名前は、まだ無い。");
             let actual = parser.collect::<Vec<Token>>();
             assert_eq!(actual, expected);
         }
