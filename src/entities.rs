@@ -1,4 +1,5 @@
 // Tokens for novel-style text.
+#[derive(PartialEq)]
 pub enum Token {
     // Plaintext to be rendered as-is.
     Text(String),
@@ -17,6 +18,7 @@ pub enum Token {
 }
 
 // Tokens for Rich Text.
+#[derive(PartialEq)]
 pub enum Attribute {
     // Ruby(furigana): a small text above the main text.
     Ruby(String),
