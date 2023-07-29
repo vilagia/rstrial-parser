@@ -2,7 +2,6 @@ use std::str::Chars;
 
 use crate::tokens::LineItem;
 
-
 #[derive(Debug)]
 pub struct LineParser<'a> {
     pub source: Box<String>,
@@ -42,7 +41,8 @@ impl Iterator for LineParser<'_> {
                 for char in self.chars.by_ref() {
                     match char {
                         '。' | '！' | '？' | '」' => {
-                            self.stacked_tokens.push(LineItem::EndOfSentence(char.to_string()));
+                            self.stacked_tokens
+                                .push(LineItem::EndOfSentence(char.to_string()));
                             token = Some(LineItem::Text(texts.concat()));
                             break;
                         }
@@ -69,7 +69,10 @@ impl Iterator for LineParser<'_> {
                         '}' => {
                             self.state = State::Normal;
                             let rich_text: String = texts.concat();
-                            let mut richtext_parser = crate::parser::richtext_parser::RichTextParser::new(rich_text.as_str());
+                            let mut richtext_parser =
+                                crate::parser::richtext_parser::RichTextParser::new(
+                                    rich_text.as_str(),
+                                );
                             token = Some(richtext_parser.parse());
                             break;
                         }
@@ -89,7 +92,7 @@ mod tests {
     use super::*;
 
     mod next {
-        use crate::tokens::{LineItem, self};
+        use crate::tokens::{self, LineItem};
 
         use super::*;
 
@@ -98,7 +101,10 @@ mod tests {
             let expected = vec![
                 LineItem::Text("我が輩は".to_string()),
                 LineItem::Comma("、".to_string()),
-                LineItem::RichText("猫".to_string(), tokens::line_item::Attribute::Ruby("ねこ".to_string())),
+                LineItem::RichText(
+                    "猫".to_string(),
+                    tokens::line_item::Attribute::Ruby("ねこ".to_string()),
+                ),
                 LineItem::Text("である".to_string()),
                 LineItem::EndOfSentence("。".to_string()),
                 LineItem::Text("名前は".to_string()),

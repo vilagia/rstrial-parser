@@ -23,21 +23,23 @@ impl<'a> Iterator for SectionParser<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut line: Option<Line> = None;
-                for line_str in self.lines.by_ref() {
-                    if line_str.starts_with("//") {
-                        line = Some(Line::Comment(line_str.strip_prefix("//").unwrap().to_string()));
-                        break;
-                    }
-                    let line_parser = LineParser::new(line_str);
-                    if line_str.starts_with("「") {
-                        let items: Vec<LineItem> = line_parser.collect();
-                        line = Some(Line::Conversation(items));
-                    } else {
-                        let items: Vec<LineItem> = line_parser.collect();
-                        line = Some(Line::Paragraph(items));
-                    }
-                    break;
-                }
+        for line_str in self.lines.by_ref() {
+            if line_str.starts_with("//") {
+                line = Some(Line::Comment(
+                    line_str.strip_prefix("//").unwrap().to_string(),
+                ));
+                break;
+            }
+            let line_parser = LineParser::new(line_str);
+            if line_str.starts_with("「") {
+                let items: Vec<LineItem> = line_parser.collect();
+                line = Some(Line::Conversation(items));
+            } else {
+                let items: Vec<LineItem> = line_parser.collect();
+                line = Some(Line::Paragraph(items));
+            }
+            break;
+        }
         line
     }
 }
