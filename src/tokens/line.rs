@@ -1,6 +1,8 @@
+use super::LineItem;
+
 pub enum Line {
-    Paragraph(String),
-    Conversation(String),
-    Quotation(String),
+    Paragraph(Vec<LineItem>),
+    Conversation(Vec<LineItem>),
+    Quotation(Vec<LineItem>),
     Comment(String),
 }
