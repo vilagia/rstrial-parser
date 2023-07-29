@@ -3,7 +3,7 @@ use std::str::Chars;
 use crate::tokens::{line_item::Attribute, LineItem};
 
 pub struct RichTextParser<'a> {
-    source: Box<String>,
+    source: String,
     chars: Box<Chars<'a>>,
     state: State,
 }
@@ -16,7 +16,7 @@ enum State {
 impl<'a> RichTextParser<'a> {
     pub fn new(text: &'a str) -> Self {
         Self {
-            source: Box::new(text.to_string()),
+            source: text.to_string(),
             chars: Box::new(text.chars()),
             state: State::Text,
         }
@@ -35,11 +35,9 @@ impl<'a> RichTextParser<'a> {
                         texts.push(char.to_string());
                     }
                 },
-                _ => match char {
-                    _ => {
-                        attribute_chars.push(char.to_string());
-                    }
-                },
+                _ => {
+                    attribute_chars.push(char.to_string());
+                }
             }
         }
         let attribute = match self.state {
