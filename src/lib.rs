@@ -13,10 +13,10 @@ pub fn parse_line(line: &str) -> Vec<entities::Token> {
                 tokens.push(entities::Token::Text(plainstrings.concat()));
                 tokens.push(entities::Token::EndOfSentence(char.to_string()));
                 plainstrings.clear();
-            },
+            }
             _ => {
                 plainstrings.push(char.to_string());
-            },
+            }
         }
     }
     tokens
@@ -41,7 +41,7 @@ mod tests {
             let expected = vec![
                 entities::Token::Text("我が輩は猫である".to_string()),
                 entities::Token::EndOfSentence("。".to_string()),
-                ];
+            ];
             assert_eq!(result, expected);
         }
     }
