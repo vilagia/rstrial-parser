@@ -1,6 +1,6 @@
 use std::str::Chars;
 
-use crate::entities::{Token, Attribute};
+use crate::tokens::{LineItem, line_item::Attribute};
 
 pub struct RichTextParser<'a> {
     source: Box<String>,
@@ -22,7 +22,7 @@ impl<'a> RichTextParser<'a> {
         }
     }
 
-    pub fn parse(&mut self) -> Token {
+    pub fn parse(&mut self) -> LineItem {
         let mut texts = vec![];
         let mut attribute_chars = vec![];
         for char in self.chars.by_ref() {
@@ -50,7 +50,7 @@ impl<'a> RichTextParser<'a> {
             State::Ruby => Attribute::Ruby(attribute_chars.concat()),
             State::Text => panic!("Invalid state."),
         };
-        Token::RichText(texts.concat(), attribute)
+        LineItem::RichText(texts.concat(), attribute)
     }
 }
 
@@ -62,6 +62,6 @@ mod tests {
     fn test_parse_ruby() {
         let mut parser = RichTextParser::new("漢字|かんじ");
         let token = parser.parse();
-        assert_eq!(token, Token::RichText("漢字".to_string(), Attribute::Ruby("かんじ".to_string())));
+        assert_eq!(token, LineItem::RichText("漢字".to_string(), Attribute::Ruby("かんじ".to_string())));
     }
 }
